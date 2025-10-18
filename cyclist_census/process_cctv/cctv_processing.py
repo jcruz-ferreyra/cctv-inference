@@ -59,6 +59,7 @@ def _copy_video_to_colab(ctx: CCTVProcessingContext) -> Path:
     logger.info(f"  Destination: {colab_video}")
 
     try:
+        colab_video.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(remote_video, colab_video)
         video_size_mb = colab_video.stat().st_size / (1024 * 1024)
         logger.info(f"Video copied successfully ({video_size_mb:.1f} MB)")
