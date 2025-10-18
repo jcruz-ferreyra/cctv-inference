@@ -33,26 +33,25 @@ from .types import CCTVProcessingContext
 logger = logging.getLogger(__name__)
 
 
-def _copy_video_to_colab(ctx: CCTVProcessingContext) -> Path:
+def _copy_video_to_colab(ctx: CCTVProcessingContext) -> None:
     """Set up local Colab storage and copy video from Drive."""
 
-    colab_data_dir = Path("/content/data")
     logger.info("Setting up Colab environment")
     logger.info(f"  Remote data dir (Drive): {ctx.data_dir}")
-    logger.info(f"  Local data dir (Colab): {colab_data_dir}")
+    logger.info(f"  Local data dir (Colab): {ctx.colab_data_dir}")
 
     # Create local directory structure
-    colab_input_dir = colab_data_dir / ctx.input_folder
+    colab_input_dir = ctx.colab_data_dir / ctx.input_folder
     colab_input_dir.mkdir(parents=True, exist_ok=True)
     logger.debug(f"Created input directory: {colab_input_dir}")
 
-    colab_output_dir = colab_data_dir / ctx.output_folder
+    colab_output_dir = ctx.colab_data_dir / ctx.output_folder
     colab_output_dir.mkdir(parents=True, exist_ok=True)
     logger.debug(f"Created output directory: {colab_output_dir}")
 
     # Copy video from Drive to local storage
-    remote_video = ctx.video_path
-    colab_video = colab_data_dir / ctx.input_folder / ctx.video_name
+    remote_video = ctx.local_video_path
+    colab_video = ctx.colab_data_dir / ctx.input_folder / ctx.video_name
 
     logger.info("Copying video from Drive to Colab storage")
     logger.info(f"  Source: {remote_video}")
@@ -84,8 +83,6 @@ def _copy_video_to_colab(ctx: CCTVProcessingContext) -> Path:
 
     logger.info("Colab environment setup complete")
 
-    ctx.colab_data_dir = colab_data_dir
-
 
 def _initialize_tracker(ctx: CCTVProcessingContext) -> None:
     """Initialize the object tracker based on context settings."""
@@ -94,7 +91,7 @@ def _initialize_tracker(ctx: CCTVProcessingContext) -> None:
 
     if tracker_type == "bytetrack":
         tracker_params = ctx.tracking.get("tracker_params", {})
-        video_info = sv.VideoInfo.from_video_path(ctx.video_path)
+        video_info = sv.VideoInfo.from_video_path(ctx.local_video_path)
         tracker_params["frame_rate"] = video_info.fps
 
         logger.debug(f"ByteTrack parameters: {tracker_params}")
@@ -115,7 +112,7 @@ def _initialize_tracker(ctx: CCTVProcessingContext) -> None:
 def _get_output_video_info(ctx: CCTVProcessingContext) -> sv.VideoInfo:
     """Create output video info adjusted for inference interval and resolution."""
     # Get info from input video
-    input_info = sv.VideoInfo.from_video_path(ctx.video_path)
+    input_info = sv.VideoInfo.from_video_path(ctx.local_video_path)
 
     # Calculate output FPS based on inference interval
     inference_interval = ctx.frame_processing.get("inference_interval", 1)
@@ -476,7 +473,7 @@ def _process_video(ctx: CCTVProcessingContext) -> None:
     logger.info("Starting video processing")
 
     # Get input and output video info
-    input_info = sv.VideoInfo.from_video_path(ctx.video_path)
+    input_info = sv.VideoInfo.from_video_path(ctx.local_video_path)
     output_info = _get_output_video_info(ctx)
 
     # Calculate total inference frames
@@ -487,7 +484,12 @@ def _process_video(ctx: CCTVProcessingContext) -> None:
         total_frames = input_info.total_frames
 
     # Get input video info
-    frames_generator = sv.get_video_frames_generator(ctx.video_path)
+    video_path = (
+        ctx.colab_video_path
+        if ctx.system.get("environment", "local") == "colab"
+        else ctx.local_video_path
+    )
+    frames_generator = sv.get_video_frames_generator(video_path)
 
     # Create video counter and sink manager
     counter = _initialize_frame_counter(ctx, input_info, total_frames)

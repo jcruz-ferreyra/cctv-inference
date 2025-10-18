@@ -37,12 +37,14 @@ class CCTVProcessingContext:
     annotators: Dict[str, Any] = field(default_factory=dict)
 
     @property
-    def video_path(self) -> Path:
+    def local_video_path(self) -> Path:
         """Full path to input video file."""
-        if self.system.get("environment", "local") == "colab":
-            return self.colab_data_dir / self.input_folder / self.video_name
-        else:
-            return self.data_dir / self.input_folder / self.video_name
+        return self.data_dir / self.input_folder / self.video_name
+
+    @property
+    def colab_video_path(self) -> Path:
+        """Full path to input video file in Colab environment."""
+        return self.colab_data_dir / self.input_folder / self.video_name
 
     @property
     def output_dir(self) -> Path:
@@ -115,8 +117,8 @@ class CCTVProcessingContext:
     def __post_init__(self):
         """Validate paths and configuration."""
         # Validate input video exists
-        if not self.video_path.exists():
-            raise FileNotFoundError(f"Video file not found: {self.video_path}")
+        if not self.local_video_path.exists():
+            raise FileNotFoundError(f"Video file not found: {self.local_video_path}")
 
         # Validate detection model weights exist
         if not self.detection_model_path.exists():
