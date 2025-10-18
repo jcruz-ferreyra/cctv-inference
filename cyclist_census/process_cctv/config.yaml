@@ -1,0 +1,113 @@
+# Input/Output
+input_folder: results/cctv_videos
+output_folder: results/cctv_videos
+video_name: F053_LAG_H35/240729/F053_LAG_H35_240729_22.avi
+
+# Video Processing
+frame_processing:
+  inference_interval: 1
+  partition_minutes: 2
+  frame_batch_size: 32
+  video_start_time: "2024-07-29 13:21:24"
+  video_end_time: null
+  start_from_partition: 2
+  inference_limit: 0
+
+# Detection Model
+detection:
+  model_architecture: "yolov8m" # rfdetr_base
+  model_weights: "detection/yolov8m_v3_1/a002f2653c814b87a7e8f0e5a395a372/weights/best.pt"
+  model_params:
+    imgsz: 640
+    verbose: false
+    conf: 0.25
+    iou: 0.6
+    agnostic_nms: false
+  batch_size: 16
+  confidence_threshold: 0.5
+  class_label: 
+    0: person
+    1: car
+    2: bicycle
+    3: motorcycle
+    4: truck
+    5: bus
+    6: van
+  category_confidence:
+    person: 0.25
+    car: 0.5
+    bicycle: 0.15
+    motorcycle: 0.15
+    bus: 0.5
+  category_classes:
+    person: [0]
+    car: [1, 4, 6]
+    bicycle: [2]
+    motorcycle: [3]
+    bus: [5]
+
+# Tracking
+tracking:
+  tracker_type: "bytetrack"
+  tracker_params:
+    minimum_matching_threshold: .75
+  class_history_length: 5
+
+# Classification Model (optional)
+classification:
+  enabled: true
+  online: true
+  model_architecture: "resnet50"
+  model_weights: "classification/resnet50_v2_5/b1bcb6ec2fe440d5bfc21057375a4c49/weights/best.pt"
+  model_params: {}
+  threshold: 0.75
+  batch_size: 64
+  labels: [female, male]
+
+line_counters:
+  source: "F053_LAG_H35/240729/line_counters.json"
+
+# Output Configuration
+output:
+  save_video: true
+  keep_crops: true  # Retain crops after completion
+  save_counts: true
+  formats: [json, csv]
+
+# Video Output Settings
+video_output:
+  resolution_ratio: .5 # Reduce output resolution
+  save_single: false # Whether to save a single video, or one per aggregated interval
+  bboxes:
+    draw: true
+    params:
+      thickness: 4
+  labels:
+    draw: true
+    params:
+      text_scale: 1
+      text_padding: 3
+  line_counters:
+    draw: true
+    params:
+      text_thickness: 1
+      text_scale: .8
+      text_offset: 1
+      text_padding: 10
+  results:
+    draw: true
+    params:
+      position: "top-right"
+      text_scale: 1
+      text_padding: 3
+  codec: "mp4"
+
+# System
+system:
+  num_workers: 4
+  mixed_precision: true
+  environment: "local"  # or "colab"
+
+
+
+
