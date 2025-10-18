@@ -28,7 +28,7 @@ class CCTVProcessingContext:
     system: Dict[str, Any]
 
     # Runtime objects (initialized during processing)
-    colab_data_dir: Optional[Path] = None
+    colab_data_dir: Path = Path("/content/data")
 
     detection_model: Optional[Any] = None
     classification_model: Optional[Any] = None
