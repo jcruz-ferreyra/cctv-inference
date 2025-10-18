@@ -28,7 +28,7 @@ class CCTVProcessingContext:
     system: Dict[str, Any]
 
     # Runtime objects (initialized during processing)
-    remote_data_dir: Optional[Path] = None
+    colab_data_dir: Optional[Path] = None
 
     detection_model: Optional[Any] = None
     classification_model: Optional[Any] = None
@@ -39,7 +39,10 @@ class CCTVProcessingContext:
     @property
     def video_path(self) -> Path:
         """Full path to input video file."""
-        return self.data_dir / self.input_folder / self.video_name
+        if self.system.get("environment", "local") == "colab":
+            return self.colab_data_dir / self.input_folder / self.video_name
+        else:
+            return self.data_dir / self.input_folder / self.video_name
 
     @property
     def output_dir(self) -> Path:

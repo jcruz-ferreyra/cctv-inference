@@ -84,8 +84,7 @@ def _copy_video_to_colab(ctx: CCTVProcessingContext) -> Path:
 
     logger.info("Colab environment setup complete")
 
-    ctx.remote_data_dir = ctx.data_dir
-    ctx.data_dir = colab_data_dir
+    ctx.colab_data_dir = colab_data_dir
 
 
 def _initialize_tracker(ctx: CCTVProcessingContext) -> None:
