@@ -6,11 +6,11 @@ video_name: F053_LAG_H35/240729/F053_LAG_H35_240729_22.avi
 # Video Processing
 frame_processing:
   inference_interval: 1
-  partition_minutes: 2
+  partition_minutes: 0
+  start_from_partition: 0
   frame_batch_size: 32
   video_start_time: "2024-07-29 13:21:24"
   video_end_time: null
-  start_from_partition: 2
   inference_limit: 0
 
 # Detection Model
