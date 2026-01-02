@@ -1,0 +1,112 @@
+# Input/Output
+input_folder: results/cctv_videos           # Directory containing input videos
+output_folder: results/cctv_videos          # Directory for output results
+video_name: path/to/video.avi               # Path to video file relative to input_folder
+
+# Video Processing
+frame_processing:                           # Optional: all fields have defaults
+  inference_interval: 1                     #  Process every Nth frame (1 = every frame, 5 = every 5th frame)
+  partition_minutes: 0                      #  Split processing into N-minute partitions (0 = no partitioning)
+  frame_batch_size: 32                      #  Number of frames to batch for processing
+  video_start_time: "YYYY-MM-DD hh:mm:ss"   #  Real-world timestamp of first video frame
+  video_end_time: null                      #  Stop processing at this timestamp
+  start_from_partition: 0                   #  Resume from partition N (0 = start from beginning)
+  inference_limit: 0                        #  Stop after processing N frames (0 = process entire video)
+
+# Detection Model
+detection:
+  model_architecture: "yolov8m"             # Detection model type: yolov8m, yolov11, rfdetr_base, etc.
+  model_weights: "path/to/weights/best.pt"  # Path to model checkpoint relative to MODELS_DIR
+  model_params:                             # Optional: model-specific inference parameters
+    imgsz: 640
+    verbose: false
+    conf: 0.15                              # Global confidence threshold (also default for category_confidence)
+    iou: 0.6
+    agnostic_nms: false
+  class_label:                              # Mapping of class IDs to names
+    0: person
+    1: car
+    2: bicycle
+    3: motorcycle
+    4: truck
+    5: bus
+    6: van
+  category_confidence:                      # Optional: per-category confidence thresholds (defaults to conf from model_params)
+    person: 0.25
+    car: 0.5
+    bicycle: 0.15
+    motorcycle: 0.15
+    bus: 0.5
+  category_classes:                         # Optional: group class IDs into categories (defaults to one class per label)
+    person: [0]
+    car: [1, 4, 6]
+    bicycle: [2]
+    motorcycle: [3]
+    bus: [5]
+
+# Tracking
+tracking:                                   # Optional: all fields have defaults
+  tracker_type: "bytetrack"                 #  Tracking algorithm (only bytetrack supported)
+  tracker_params:                           #  Tracker-specific parameters
+    minimum_matching_threshold: .75         #  Minimum IoU for track matching
+  class_history_length: 5                   #  Number of frames to retain in track history
+
+# Classification Model
+classification:                             # Optional: defaults to disabled if not provided
+  enabled: true                             #  Enable gender classification
+  model_architecture: "resnet50"            #  Required if enabled: resnet50, resnet101, efficientnet_b0, efficientnet_b3
+  model_weights: "path/to/weights/best.pt"  #  Required if enabled: path to model checkpoint relative to MODELS_DIR
+  labels: [female, male]                    #  Required if enabled: class labels in order
+  online: true                              #  Optional: classify during inference (true) or post-process crops (false)
+  model_params: {}                          #  Optional: model-specific parameters
+  threshold: 0.75                           #  Optional: classification decision threshold
+  batch_size: 64                            #  Optional: batch size for classification inference
+  
+
+line_counters:
+  source: "path/to/line_counters.json"      # Path to line counters file relative to input_folder
+
+# Output Configuration
+output:                                     # Optional: all fields have defaults
+  save_video: false                         #  Generate annotated output video
+  keep_crops: false                         #  Retain cyclist crop images after completion
+  save_counts: true                         #  Save count results
+  formats: [json, csv]                      #  Output formats for count data
+
+# Video Output Settings
+video_output:                               # Optional: not needed if save_video is false, all fields have defaults otherwise
+  resolution_ratio: 1.0                     #  Scale output resolution (1.0 = original, 0.5 = half)
+  save_single: false                        #  If partitioned, save single video (true) or one per partition (false)
+  bboxes:                                   #  Bounding box visualization
+    draw: true                              #  Whether to draw bboxes in output video
+    params:                                 #  Drawing parameters
+      thickness: 4                          #  Bbox line thickness
+  labels:                                   #  Bbox label visualization
+    draw: true                              #  Whether to draw bbox labels in output video
+    params:                                 #  Drawing parameters
+      text_scale: 1                         #  Label text size
+      text_padding: 3                       #  Padding around label text
+  line_counters:                            #  Line counter visualization
+    draw: true                              #  Whether to draw counting lines in output video
+    params:                                 #  Drawing parameters
+      text_thickness: 1                     #  Line thickness
+      text_scale: 0.8                       #  Text size
+      text_offset: 1                        #  Text offset from line
+      text_padding: 10                      #  Padding around text
+  results:                                  #  Results overlay visualization
+    draw: false                             #  Whether to draw count statistics on video
+    params:                                 #  Drawing parameters
+      position: "top-right"                 #  Position: top-left, top-right, bottom-left, bottom-right
+      text_scale: 1                         #  Text size
+      text_padding: 3                       #  Padding around text
+  codec: "mp4"                              #  Output video codec
+
+# System
+system:
+  environment: "local"                      # Execution environment: local or colab
+  num_workers: 4                            # Optional: number of worker threads for data loading
+  mixed_precision: true                     # Optional: use mixed precision (FP16) for faster inference
+
+
+
+

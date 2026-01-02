@@ -1,0 +1,35 @@
+# Input/Output
+input_folder: results/cctv_videos           # Directory containing input videos
+output_folder: results/cctv_videos          # Directory for output results
+video_name: path/to/video.avi               # Path to video file relative to input_folder
+
+# Detection Model
+detection:
+  model_architecture: "yolov8m"             # Detection model type: yolov8m, yolov11, rfdetr_base, etc.
+  model_weights: "path/to/weights/best.pt"  # Path to model checkpoint relative to MODELS_DIR
+  class_label:                              # Mapping of class IDs to names
+    0: person
+    1: car
+    2: bicycle
+    3: motorcycle
+    4: truck
+    5: bus
+    6: van
+
+# Classification Model
+classification:                             # Optional: defaults to disabled if not provided
+  enabled: true                             # Enable gender classification
+  model_architecture: "resnet50"            # Required if enabled: resnet50, resnet101, efficientnet_b0, efficientnet_b3
+  model_weights: "path/to/weights/best.pt"  # Required if enabled: path to model checkpoint relative to MODELS_DIR
+  labels: [female, male]                    # Required if enabled: class labels in order
+
+line_counters:
+  source: "path/to/line_counters.json"      # Path to line counters file relative to input_folder
+
+# System
+system:
+  environment: "local"  # or "colab"        # Execution environment: local or colab
+
+
+
+

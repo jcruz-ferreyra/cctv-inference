@@ -101,11 +101,6 @@ def _initialize_tracker(ctx: CCTVProcessingContext) -> None:
     else:
         raise ValueError(f"Unsupported tracker type: {tracker_type}. " f"Supported: 'bytetrack'")
 
-    # Initialize class history tracking for smoothing
-    ctx.tracking["tracker_class_history"] = {}
-    if not ctx.tracking.get("class_history_length"):
-        ctx.tracking["class_history_length"] = 7
-
     logger.info(f"Tracker {tracker_type} initialized successfully")
 
 
