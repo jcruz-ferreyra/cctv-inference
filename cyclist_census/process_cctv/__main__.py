@@ -22,13 +22,8 @@ required_keys = [
     "input_folder",
     "output_folder",
     "video_name",
-    "frame_processing",
     "detection",
-    "tracking",
-    "classification",
     "line_counters",
-    "output",
-    "video_output",
     "system",
 ]
 check_missing_keys(required_keys, script_config)
@@ -39,14 +34,15 @@ OUTPUT_FOLDER = Path(script_config["output_folder"])
 VIDEO_NAME = script_config["video_name"]
 
 # Parse configuration sections
-FRAME_PROCESSING = script_config["frame_processing"]
 DETECTION = script_config["detection"].copy()
-TRACKING = script_config["tracking"]
-CLASSIFICATION = script_config["classification"]
 LINE_COUNTERS = script_config["line_counters"]
-OUTPUT = script_config["output"]
-VIDEO_OUTPUT = script_config["video_output"]
 SYSTEM = script_config["system"]
+
+FRAME_PROCESSING = script_config.get("frame_processing")
+TRACKING = script_config.get("tracking")
+CLASSIFICATION = script_config.get("classification")
+OUTPUT = script_config.get("output")
+VIDEO_OUTPUT = script_config.get("video_output")
 
 DETECTION["class_confidence"] = [
     (DETECTION["category_classes"][k], v) for k, v in DETECTION["category_confidence"].items()

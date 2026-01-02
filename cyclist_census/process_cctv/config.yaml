@@ -70,14 +70,14 @@ line_counters:
 # Output Configuration
 output:
   save_video: true
-  keep_crops: true  # Retain crops after completion
+  keep_crops: true
   save_counts: true
   formats: [json, csv]
 
 # Video Output Settings
 video_output:
-  resolution_ratio: .5 # Reduce output resolution
-  save_single: false # Whether to save a single video, or one per aggregated interval
+  resolution_ratio: .5
+  save_single: false
   bboxes:
     draw: true
     params:
