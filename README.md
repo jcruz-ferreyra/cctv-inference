@@ -37,7 +37,7 @@ Real-time CCTV video processing pipeline that detects, tracks, and counts cyclis
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/cyclist_census.git
+   git clone https://github.com/jcruz-ferreyra/cyclist_census.git
    cd cyclist_census
    ```
 
@@ -600,13 +600,13 @@ If you use this system in your research, please cite:
   author={Your Name},
   institution={Northeastern University, Boston Area Research Initiative},
   year={2024},
-  url={https://github.com/yourusername/cyclist_census}
+  url={https://github.com/jcruz-ferreyra/cyclist_census}
 }
 ```
 
 ---
 
-## License
+<!-- ## License
 
 [Your chosen license]
 
@@ -616,4 +616,4 @@ If you use this system in your research, please cite:
 
 For questions or issues:
 - GitHub Issues: [link]
-- Email: [your.email@university.edu]
+- Email: [your.email@university.edu] -->
