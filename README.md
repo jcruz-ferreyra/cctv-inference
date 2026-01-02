@@ -588,7 +588,7 @@ cyclist_census/
 └── README.md                        # This file
 ```
 
----
+<!-- ---
 
 ## Citation
 
@@ -604,7 +604,7 @@ If you use this system in your research, please cite:
 }
 ```
 
----
+--- -->
 
 <!-- ## License
 
