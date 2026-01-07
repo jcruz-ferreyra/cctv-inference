@@ -2,7 +2,7 @@
 
 Automated vehicle counting and cyclist demographic analysis from CCTV footage using computer vision.
 
-> **Part of the [Cyclist Census](https://github.com/yourusername/cyclist_census) research project** - See the main repository for methodology, results, and the complete development pipeline.
+> **Part of the [Cyclist Census](https://github.com/jcruz-ferreyra/cyclist_census) research project** - See the main repository for methodology, results, and the complete development pipeline.
 
 <br>
 
