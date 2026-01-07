@@ -1,3 +1,138 @@
+# CCTV Inference
+
+Automated vehicle counting and cyclist demographic analysis from CCTV footage using computer vision.
+
+> **Part of the [Cyclist Census](https://github.com/yourusername/cyclist_census) research project** - See the main repository for methodology, results, and the complete development pipeline.
+
+## Overview
+
+Offline CCTV video processing pipeline that detects, tracks, and counts vehicles while capturing cyclist gender demographics and bike lane compliance data. Designed for urban transportation research and planning.
+
+### Capabilities
+
+- **Multi-object detection and tracking**: YOLO/RFDETR detection + ByteTrack multi-object tracking
+- **Cyclist identification**: Person-bicycle matching using IoU-based association
+- **Gender classification**: EfficientNet/ResNet models with temporal aggregation for robust predictions
+- **Directional counting**: Line-based counters with configurable class filtering and direction tracking
+- **Temporal aggregation**: Configurable time intervals (e.g., 15-minute partitions) for count summaries
+- **Google Colab support**: Checkpoint-based processing with automated resume on disconnection
+
+### Output
+
+- **Count data** - JSON/CSV files with temporal breakdowns by vehicle type, gender, lane compliance, and direction
+- **Annotated videos (Optional)** - Bounding boxes, tracker IDs, classification labels, and live count overlays
+- **Cyclist crops (Optional)** - Individual images per tracked cyclist for verification and quality control
+
+## Installation
+
+### Prerequisites
+   - Python 3.11+
+   - Poetry (for dependency management)
+   - GPU recommended (CUDA-compatible)
+
+### Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/jcruz-ferreyra/cctv-inference.git
+   cd cctv-inference
+   ```
+
+2. **Install dependencies**
+   ```bash
+   poetry install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your paths:
+   # DATA_DIR=/path/to/your/main/data/folder
+   # MODELS_DIR=/path/to/your/main/models/folder
+   ```
+
+4. **Download model weights**
+   
+   Place trained model weights in your `MODELS_DIR`:
+   ```
+   models/
+   ├── path/to/detection/model/weights.pt
+   └── path/to/classification/model/weights.pt
+   ```
+
+5. **Prepare your data**
+   ```
+   data/
+   └── path/to/your/video/folder
+      ├── your_video.avi
+      └── line_counters.json
+   ```
+
+## Quick Start
+
+### Task 1: [Process CCTV Video](cctv_inference/process_cctv)
+Runs the complete pipeline: detection → tracking → classification → counting.
+
+**Configuration**:
+this task uses two layers configuration.
+
+One yaml for paths, processing parameters, model parameters, and output parameters. This configuration is defined in the ([`config.yaml`](cctv_inference/process_cctv/config.yaml)) file within the task folder.
+
+```yaml
+input_folder: path/to/your/video/folder   # Directory containing input videos
+output_folder: path/to/your/video/folder  # Directory for output results
+video_name: your_video.avi                # Path to video file relative to input_folder
+
+line_counters:
+  source: "line_counters.json"            # Path to line counters configuration file relative to input_folder
+...
+```
+
+ A full configuration reference is available in [`config_full.yaml`](process_cctv/config_full.yaml) file.
+
+ Second json file with the configuration for the line counters parameters located inside the input_folder parameter set in the config.yaml file.
+
+ 
+
+
+**Run**:
+```bash
+poetry run python -m process_cctv
+```
+
+**Output** (saved to `output_folder/video_name.parent`):
+- `{video_name}_counts_part_{N}.json` - Count data with temporal breakdowns
+- `{video_name}_counts_part_{N}.csv` - Same data in CSV format
+- `{video_name}_output_part_{N}.mp4` - Annotated video (if `save_video: true`)
+- `crops/{tracker_id}_frame{N}.jpg` - Cyclist images (if `keep_crops: true`)
+
+## How It Works
+
+### Architecture
+File structure + context pattern
+
+### Data Organization
+Where to put inputs/outputs
+
+### Processing Pipeline
+Diagram + flow description
+
+### Key Components
+Algorithm explanations
+
+## Output Format
+(if applicable)
+
+## Troubleshooting
+(if needed)
+
+## Additional Resources
+Link to main cyclist_census repo
+
+
+============================================================================================
+PREVIOUS
+============================================================================================
 # Cyclist Census
 
 Automated cyclist counting and demographic analysis from CCTV footage using computer vision.
