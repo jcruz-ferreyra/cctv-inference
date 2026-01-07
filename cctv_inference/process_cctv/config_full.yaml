@@ -1,7 +1,7 @@
 # Input/Output
-input_folder: results/cctv_videos           # Directory containing input videos
-output_folder: results/cctv_videos          # Directory for output results
-video_name: path/to/video.avi               # Path to video file relative to input_folder
+input_folder: path/to/your/video/folder     # Directory containing input videos
+output_folder: path/to/your/video/folder    # Directory for output results
+video_name: your_video.avi                  # Path to video file relative to input_folder
 
 # Video Processing
 frame_processing:                           # Optional: all fields have defaults
@@ -16,7 +16,7 @@ frame_processing:                           # Optional: all fields have defaults
 # Detection Model
 detection:
   model_architecture: "yolov8m"             # Detection model type: yolov8m, yolov11, rfdetr_base, etc.
-  model_weights: "path/to/weights/best.pt"  # Path to model checkpoint relative to MODELS_DIR
+  model_weights: "path/to/detection/model/weights.pt"  # Relative to MODELS_DIR
   model_params:                             # Optional: model-specific inference parameters
     imgsz: 640
     verbose: false
@@ -55,7 +55,7 @@ tracking:                                   # Optional: all fields have defaults
 classification:                             # Optional: defaults to disabled if not provided
   enabled: true                             #  Enable gender classification
   model_architecture: "resnet50"            #  Required if enabled: resnet50, resnet101, efficientnet_b0, efficientnet_b3
-  model_weights: "path/to/weights/best.pt"  #  Required if enabled: path to model checkpoint relative to MODELS_DIR
+  model_weights: "path/to/classification/model/weights.pt"  # Required if enabled: Relative to MODELS_DIR
   labels: [female, male]                    #  Required if enabled: class labels in order
   online: true                              #  Optional: classify during inference (true) or post-process crops (false)
   model_params: {}                          #  Optional: model-specific parameters
@@ -64,7 +64,7 @@ classification:                             # Optional: defaults to disabled if 
   
 
 line_counters:
-  source: "path/to/line_counters.json"      # Path to line counters file relative to input_folder
+  source: "line_counters.json"              # Path to line counters file relative to input_folder
 
 # Output Configuration
 output:                                     # Optional: all fields have defaults
