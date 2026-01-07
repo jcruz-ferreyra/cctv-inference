@@ -74,25 +74,86 @@ Offline CCTV video processing pipeline that detects, tracks, and counts vehicles
 Runs the complete pipeline: detection → tracking → classification → counting.
 
 **Configuration**:
-this task uses two layers configuration.
 
-One yaml for paths, processing parameters, model parameters, and output parameters. This configuration is defined in the ([`config.yaml`](cctv_inference/process_cctv/config.yaml)) file within the task folder.
+This task uses a two-layer configuration system:
 
-```yaml
-input_folder: path/to/your/video/folder   # Directory containing input videos
-output_folder: path/to/your/video/folder  # Directory for output results
-video_name: your_video.avi                # Path to video file relative to input_folder
+1. Processing Configuration ([`config.yaml`](cctv_inference/process_cctv/config.yaml))
 
-line_counters:
-  source: "line_counters.json"            # Path to line counters configuration file relative to input_folder
-...
-```
+   YAML file defining paths, processing parameters, model settings, and output options:
+   
+   ```yaml
+   # Input/Output
+   input_folder: path/to/your/video/folder   # Directory containing input video
+   output_folder: path/to/output/results     # Directory for output results
+   video_name: your_video.avi                # Video filename (relative to input_folder)
+   
+   # Line counters
+   line_counters:
+     lines_file: "line_counters.json"        # Line configuration file (relative to input_folder)
+   
+   # Frame processing
+   frame_processing:
+     inference_interval: 5                   # Process every Nth frame
+     partition_minutes: 15                   # Time interval for result aggregation
+     video_start_time: "2024-08-01 17:30:00" # Video start timestamp
+   
+   # Detection
+   detection:
+     model_architecture: "yolo"              # "yolo" or "rfdetr"
+     model_weights: "path/to/detection/weights.pt"
+     class_label:                            # Class ID to label mapping
+       0: person
+       1: car
+       2: bicycle
+       3: motorcycle
+   
+   # Classification
+   classification:
+     enabled: true
+     model_architecture: "efficientnet_b0"
+     model_weights: "path/to/classification/weights.pt"
+      labels: [female, male]
+   
+   # Output
+   output:
+     save_video: false                       # Generate annotated video
+     keep_crops: false                       # Save individual cyclist images
+   ```
+   
+   For a complete reference with all available options and detailed comments, see [`config_full.yaml`](cctv_inference/process_cctv/config_full.yaml).
 
- A full configuration reference is available in [`config_full.yaml`](process_cctv/config_full.yaml) file.
+2. Line Counter Configuration (`line_counters.json`)
 
- Second json file with the configuration for the line counters parameters located inside the input_folder parameter set in the config.yaml file.
-
- 
+   JSON file defining counting lines, placed in the `input_folder` directory. Each line specifies vehicle detection and counting behavior using [supervision LineZone](https://supervision.roboflow.com/latest/detection/tools/line_zone/) parameters:
+   
+   ```json
+   [
+     {
+       "count_id": "StreetName_N-S_lane",
+       "lane": true,
+       "direction": "out",
+       "anchor": "top",
+       "labels": ["bicycle", "motorcycle"],
+       "coords": [[376, 1037], [629, 1121]]
+     },
+     {
+       "count_id": "StreetName_N-S_car",
+       "lane": false,
+       "direction": "out",
+       "anchor": "center",
+       "labels": ["car", "bus", "truck"],
+       "coords": [[380, 1040], [632, 1124]]
+     }
+   ]
+   ```
+   
+   Field descriptions:
+   - `count_id` - Unique identifier for this counting line (format: `{location}_{direction}`.) 
+   - `lane` - `true` for bike lane counters, `false` for car lanes
+   - `direction` - Count direction: `"in"` or `"out"` (see [LineZone docs](https://supervision.roboflow.com/latest/detection/tools/line_zone/))
+   - `anchor` - Detection anchor point: `"center"`, `"top"`, or `"bottom"` (see [LineZone docs](https://supervision.roboflow.com/latest/detection/tools/line_zone/))
+   - `labels` - Vehicle classes to count (must match `class_label` values in `config.yaml`)
+   - `coords` - Line coordinates as `[[x1, y1], [x2, y2]]` (see [LineZone docs](https://supervision.roboflow.com/latest/detection/tools/line_zone/))
 
 
 **Run**:
