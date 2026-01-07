@@ -158,7 +158,7 @@ This task uses a two-layer configuration system:
 
 **Run**:
 ```bash
-poetry run python -m process_cctv
+poetry run python -m cctv_inference.process_cctv
 ```
 
 **Output** (saved to `output_folder/video_name.parent`):
